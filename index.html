@@ -1,0 +1,213 @@
+<!--
+  Modelo Single Page para atividade: Portfólio pessoal (HTML + CSS + JS puro)
+  - Contém 4 seções obrigatórias: Sobre, Formação, Portfólio, Contato
+  - Validação de formulário em JavaScript e simulação de envio
+  - Tema claro/escuro (toggle)
+  - Menu responsivo (mobile)
+  - Comentários explicativos no código
+-->
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Portfólio</title>
+  <meta name="description" content="Portfólio online - Sobre, Formação, Portfólio e Contato">
+
+  <style>
+    :root{
+      --bg: #ffffff;
+      --fg: #222;
+      --primary: #2b6cb0;
+      --muted: #666;
+      --card: #f7f9fc;
+      --radius: 12px;
+    }
+    [data-theme='dark']{
+      --bg: #0f1720;
+      --fg: #e6eef8;
+      --primary: #60a5fa;
+      --muted: #9aa6b2;
+      --card: #0b1220;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg);
+      color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+      line-height:1.5;
+      padding-bottom:4rem;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    header{
+      position:sticky;top:0;z-index:40;
+      backdrop-filter: blur(6px);
+      background: var(--bg);
+      border-bottom:1px solid rgba(0,0,0,0.06);
+      padding:8px 16px;
+      display:flex;align-items:center;gap:12px;
+    }
+    [data-theme='dark'] header{background: var(--bg); border-bottom:1px solid rgba(255,255,255,0.08);}
+
+    nav{margin:0 auto;display:flex;gap:8px;align-items:center;justify-content:center;width:100%}
+    nav a{padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--fg);font-weight:600}
+    nav a:hover{background:var(--card)}
+
+    .menu-toggle{display:none;border:0;background:transparent;font-size:18px;padding:6px}
+
+    main{max-width:980px;margin:22px auto;padding:0 16px}
+    .hero{display:flex;gap:18px;align-items:center;justify-content:center;text-align:center}
+    .avatar{width:120px;height:120px;border-radius:14px;object-fit:cover;margin-bottom:12px}
+
+    .card{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,0.04)}
+
+    section{margin-top:18px}
+    h2{margin:0 0 10px 0}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+
+    form{display:flex;flex-direction:column;gap:10px}
+    label{font-weight:600}
+    input[type=text], input[type=email], textarea{
+      padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);background:var(--card);color:var(--fg);
+    }
+    textarea{min-height:120px;resize:vertical}
+    input[type=text]:focus, input[type=email]:focus, textarea:focus{outline:2px solid rgba(0,0,0,0.06);box-shadow:0 0 0 3px rgba(0,0,0,0.03);}
+
+    .row{display:flex;gap:10px}
+    .btn{
+      display:inline-block;padding:10px 14px;border-radius:10px;border:0;background:var(--primary);color:white;font-weight:700;text-decoration:none;cursor:pointer
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(0,0,0,0.08);color:var(--fg)}
+
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:14px}
+
+    @media(max-width:760px){
+      .hero{flex-direction:column;align-items:flex-start}
+      nav{position:fixed;right:12px;top:54px;background:var(--card);padding:10px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.06);display:none;flex-direction:column}
+      nav.open{display:flex}
+      .menu-toggle{display:block;margin-left:auto}
+    }
+
+    .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);min-width:260px;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.25);display:none;z-index:100}
+    .modal.show{display:block;animation:pop .16s ease-out}
+    @keyframes pop{from{opacity:0;transform:translate(-50%,-50%) scale(0.95)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+    /* Centraliza apenas os links do menu */
+    #nav .menu-center {
+      display: flex;
+      justify-content: center;
+      flex: 1;
+      gap: 22px;
+    }
+
+    /* Ajusta o nav para que o botão de tema não atrapalhe o centro */
+    #nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+<header>
+  <button class="menu-toggle" aria-label="Abrir menu" id="menuBtn">☰</button>
+
+  <nav id="nav">
+    <div class="menu-center">
+      <a href="#sobre">Sobre</a>
+      <a href="#formacao">Formação</a>
+      <a href="#portfolio">Portfólio</a>
+      <a href="#contato">Contato</a>
+    </div>
+    <button class="btn secondary" id="themeToggle" title="Alternar tema">🌓</button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero card" id="sobre">
+    <img src="https://avatars.githubusercontent.com/u/248538803?s=400&u=90a9bd593762c6eb54aec119b71fdc7e60614e07&v=4" alt="Gabriel Boese" class="avatar">
+    <div>
+      <h1>Olá — Sou Gabriel Boese</h1>
+      <p style="margin:6px 0;color:var(--muted)">Data Analyst | WFM Analyst | Python • SQL</p>
+      <p>Após quatro anos de aprendizado na área de WFM analyst, hoje exerço um papel fundamental com a minha equipe. Diariamente estudando, estruturando e simplificando estratégias para a linha de frente da operação. Todo o conhecimento que tenho não só resultou de meses de estudo mas também de muita prática e dedicação com o meu trabalho.</p>
+    </div>
+  </section>
+
+  <section id="formacao">
+    <h2>Formação</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Curso/Graduação</h3>
+        <p>Data Science — Uninter. Formação focada em análise de dados, estatística, dashboards e programação aplicada.</p>
+      </div>
+      <div class="card">
+        <h3>Cursos Complementares</h3>
+        <p>Informática Intermediaria/Avançada.</p>
+        <p>Excel Intermediario.</p>
+      </div>
+      <div class="card">
+        <h3>Idiomas</h3>
+        <p>Português (nativo), Inglês (intermediário).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <h2>Portfólio</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Análise de ROI — Ações Digitais</h3>
+        <p>Projeto voltado para medir o retorno sobre investimento (ROI) das ações digitais da empresa, identificando quais segmentos de clientes recebem mais investimento e quais geram maior retorno financeiro. A análise inclui coleta, tratamento e visualização de dados usando Python e SQL.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="contato">
+    <h2>Contato</h2>
+    <div class="card">
+      <form id="contactForm">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+        <label for="mensagem">Mensagem</label>
+        <textarea id="mensagem" required></textarea>
+        <button class="btn" type="submit">Enviar</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Gabriel Boese — Todos os direitos reservados.
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const nav = document.getElementById('nav');
+    const themeToggle = document.getElementById('themeToggle');
+    const form = document.getElementById('contactForm');
+
+    menuBtn.onclick = () => nav.classList.toggle('open');
+    themeToggle.onclick = () => {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Mensagem enviada com sucesso!');
+      form.reset();
+    });
+  </script>
+</main>
+</body>
+</html>
